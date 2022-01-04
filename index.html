@@ -18,11 +18,12 @@
         }
         .clicked {
             border: 10px solid #FFF;
+            z-index: 1000 !important;
         }
-        .expanded {
+        .details {
             display: none;
         }
-        .clicked .expanded {
+        .clicked .details {
             display: block;
         }
     </style>
@@ -61,7 +62,7 @@
             scene.add(axesHelper);
 
 
-            const createText = ({html, expanded_html, color, size, x, y, z}) => {
+            const createText = ({html, details_html, color, size, x, y, z}) => {
                 const div = document.createElement('div');
                 div.classList.add('label')
                 div.className = 'label';
@@ -72,12 +73,12 @@
                 default_div.classList.add('default');
                 default_div.innerHTML = html;
 
-                const expanded_div = document.createElement('div');
-                expanded_div.classList.add('expanded');
-                expanded_div.innerHTML = expanded_html;
+                const details_div = document.createElement('div');
+                details_div.classList.add('details');
+                details_div.innerHTML = details_html;
 
                 div.appendChild(default_div);
-                div.appendChild(expanded_div);
+                div.appendChild(details_div);
 
                 div.addEventListener('mouseover', function(e){
                     let div = this;
@@ -111,7 +112,7 @@
                 const text = 'Testing ' + Math.random();
                 createText({
                     html: `${text}`,
-                    expanded_html: `Some other shit`,
+                    details_html: `<div>❤️32 🔁12 💬12</div>`,
                     color,
                     size,
                     x, y, z
