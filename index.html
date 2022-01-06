@@ -85,7 +85,7 @@
 
                 // Set properties to configure:
                 myText.text = html;
-                myText.fontSize = size / 100;
+                myText.fontSize = size / 50;
                 myText.position.set(x, y, z);
                 myText.color = new THREE.Color(color);
                 myText.outlineWidth = 0.01;
@@ -95,29 +95,55 @@
                 myText.sync()
             }
 
-            for (var i = 0; i < 500; i++) {
-                const x = (Math.random()-0.5) * 30;
-                const y = (Math.random()-0.5) * 30
-                const z = (Math.random()-0.5) * 100
-                const color = (function(h){return '#000000'.substr(0,7-h.length)+h})((~~(Math.random()*(1<<24))).toString(16));
+            // for (var i = 0; i < 500; i++) {
+            //     const x = (Math.random()-0.5) * 30;
+            //     const y = (Math.random()-0.5) * 30
+            //     const z = (Math.random()-0.5) * 100
+            //     const color = (function(h){return '#000000'.substr(0,7-h.length)+h})((~~(Math.random()*(1<<24))).toString(16));
 
-                const size = parseInt(10 + Math.random() * 10);
-                const text = 'Testing ' + Math.random();
-                createText({
-                    html: `${text}`,
-                    details_html: `<div>❤️32 🔁12 💬12</div>`,
-                    color,
-                    size,
-                    x, y, z
-                });
-            }
+            //     const size = parseInt(10 + Math.random() * 10);
+            //     const text = 'Testing ' + Math.random();
+            //     createText({
+            //         html: `${text}`,
+            //         details_html: `<div>❤️32 🔁12 💬12</div>`,
+            //         color,
+            //         size,
+            //         x, y, z
+            //     });
+            // }
+
+            fetch('./processedTweets.json')
+            .then(response => response.json())
+            .then(data => {
+                for (const i in data) {
+                    const o = data[i]
+                    const color = new THREE.Color(`rgba(${parseInt(o.color[0])},${parseInt(o.color[1])},${parseInt(o.color[2])},${parseInt(o.color[3])})`);
+                    // console.log(color)
+                    createText({
+                        html: `${o.short_text}`,
+                        details_html: `<div>
+                                <p>
+                                <${o.renderedContent}>
+                                </p>
+                                ${o.img}
+                                <p> 💬 ${o.replyCount}  🔁 ${o.retweetCount} ❤️ ${o.likeCount}</p>
+                                </div>`,
+                        color: color,
+                        size: o.size,
+                        x: o.X, 
+                        y: o.Y,
+                        z: o.Z-o.Z/2,
+                    });
+                }
+                })
+            .catch(console.error);
 
             renderer = new THREE.WebGLRenderer();
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
 
-            renderer.domElement.addEventListener("mousemove", function(event) {
+            renderer.domElement.addEventListener("click", function(event) {
 
                 var mouse = new THREE.Vector2();
                 mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -155,7 +181,7 @@
             controls.minDistance = 5;
             controls.maxDistance = 100;
 
-            scene.fog = new THREE.Fog(new THREE.Color("#ffffff"), 0, 100);
+            //scene.fog = new THREE.Fog(new THREE.Color("#ffffff"), 0, 100);
 
             window.addEventListener('resize', onWindowResize);
         }
